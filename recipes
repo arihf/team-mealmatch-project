@@ -1,4 +1,4 @@
-# Expanded Recipe Finder
+# Recipe Finder With Partial Match Support
 
 recipes = {
     # Original recipes
@@ -21,20 +21,35 @@ recipes = {
     "Pizza": {"dough", "cheese", "tomato sauce"},
 }
 
-# Ask the user for ingredients
+# Get user ingredients
 user_input = input("Enter your ingredients (comma separated): ")
-
-# Convert input to a set of ingredients
 ingredients = {item.strip().lower() for item in user_input.split(",")}
 
-print("\nRecipes you can make:")
-found = False
+print("\n--------- Exact Matches ---------")
+exact_found = False
 
 for recipe, required in recipes.items():
-    # If user has ALL required ingredients
     if required.issubset(ingredients):
         print(f"✔ {recipe}")
-        found = True
+        exact_found = True
 
-if not found:
-    print(" No exact matches, try adding more ingredients or expanding your list!")
+if not exact_found:
+    print("❌ No exact matches.")
+
+print("\n-------- Partial Matches --------")
+
+partial_found = False
+
+for recipe, required in recipes.items():
+    missing = required - ingredients  # ingredients you don’t have
+    have = required & ingredients     # ingredients you do have
+
+    if 0 < len(have) < len(required):  # only show if at least 1 ingredient matches
+        partial_found = True
+        print(f"\n🍽 {recipe}")
+        print(f"✔ You have: {', '.join(have)}")
+        print(f"❌ Missing: {', '.join(missing)}")
+
+if not partial_found:
+    print("No partial matches either — try adding more ingredients!")
+
