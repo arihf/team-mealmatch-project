@@ -30,11 +30,11 @@ exact_found = False
 
 for recipe, required in recipes.items():
     if required.issubset(ingredients):
-        print(f"✔ {recipe}")
+        print(f" {recipe}")
         exact_found = True
 
 if not exact_found:
-    print("❌ No exact matches.")
+    print(" No exact matches.")
 
 print("\n-------- Partial Matches --------")
 
@@ -46,9 +46,9 @@ for recipe, required in recipes.items():
 
     if 0 < len(have) < len(required):  # only show if at least 1 ingredient matches
         partial_found = True
-        print(f"\n🍽 {recipe}")
-        print(f"✔ You have: {', '.join(have)}")
-        print(f"❌ Missing: {', '.join(missing)}")
+        print(f"\n {recipe}")
+        print(f" You have: {', '.join(have)}")
+        print(f" Missing: {', '.join(missing)}")
 
 if not partial_found:
     print("No partial matches either — try adding more ingredients!")
