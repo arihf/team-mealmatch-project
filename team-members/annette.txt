@@ -1,0 +1,3 @@
+Name: Annette Camacaro
+Role: Frontend Developer
+Favorite Programming Language: JavaScript
