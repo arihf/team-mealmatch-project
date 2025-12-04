@@ -106,3 +106,20 @@ h2 {
 .shopping-button:hover {
   border-color: #ff8a5c;
 }
+
+#meal-plan-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.75rem;
+}
+
+#meal-plan-list li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.meal-plan-day {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
