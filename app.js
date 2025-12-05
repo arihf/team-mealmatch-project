@@ -21,6 +21,11 @@ const recipes = [
 // This will store the IDs of favorite recipes
 let favoriteIds = [];
 
+let userHistory = {
+  viewed: [],              
+  favorites: [...favoriteIds]
+};
+
 // Get references to the HTML elements
 const recipesListEl = document.getElementById("recipes-list");
 const favoritesListEl = document.getElementById("favorites-list");
