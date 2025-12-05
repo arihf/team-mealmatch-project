@@ -24,6 +24,13 @@
     <section id="tab-all" class="tab-section">
       <h2>All Recipes</h2>
 
+      <!-- Ingredient Input -->
+      <div id="ingredient-controls">
+        <input type="text" id="ingredient-input" placeholder="Type an ingredient you have (e.g., chicken)">
+        <button id="add-ingredient-btn" class="btn small">Add</button>
+        <div id="current-ingredients" class="muted" style="margin-top:0.5rem;">No ingredients added yet.</div>
+      </div>
+
       <!-- Dietary Filters -->
       <div id="dietary-filters">
         <label><input type="checkbox" value="vegan"> Vegan</label>
@@ -33,8 +40,9 @@
         <button id="clear-filters" class="btn small">Clear</button>
       </div>
 
+      <!-- Recipe List -->
       <div id="recipes-list"></div>
-      <p id="no-results" class="muted" style="display:none;">No recipes match your filters.</p>
+      <p id="no-results" class="muted" style="display:none;">No recipes match your filters or ingredients.</p>
     </section>
 
     <!-- Favorites -->
