@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MealMatch</title>
+  <title>Recipes</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -12,69 +12,69 @@
     <p></p>
   </header>
 
-  <nav class="tabs" aria-label="Primary">
+  <nav class="tabs">
     <button class="tab-button active" data-tab="tab-all">All Recipes</button>
     <button class="tab-button" data-tab="tab-favorites">Favorites</button>
-    <button class="tab-button" data-tab="tab-recommended">Recommended for You</button>
-    <button class="tab-button" data-tab="tab-weekly">Weekly Meal Plan</button>
+    <button class="tab-button" data-tab="tab-recommended">Recommended</button>
+    <button class="tab-button" data-tab="tab-weekly">Weekly Plan</button>
   </nav>
 
   <main>
     <!-- All Recipes -->
-    <section id="tab-all" class="tab-section" aria-labelledby="All Recipes">
-      <h2>All recipes</h2>
+    <section id="tab-all" class="tab-section">
+      <h2>All Recipes</h2>
+      <div id="dietary-filters">
+        <label><input type="checkbox" value="vegan"> Vegan</label>
+        <label><input type="checkbox" value="vegetarian"> Vegetarian</label>
+        <label><input type="checkbox" value="gluten-free"> Gluten-Free</label>
+        <label><input type="checkbox" value="dairy-free"> Dairy-Free</label>
+        <button id="clear-filters" class="btn">Clear Filters</button>
+      </div>
       <div id="recipes-list"></div>
     </section>
 
     <!-- Favorites -->
-    <section id="tab-favorites" class="tab-section" aria-labelledby="Favorites" style="display:none;">
-      <h2>Your favorites</h2>
-      <p id="favorites-empty-message">No favorites yet. Tap the ☆ to add some.</p>
+    <section id="tab-favorites" class="tab-section" style="display:none;">
+      <h2>Favorites</h2>
+      <p id="favorites-empty-message">No favorites yet.</p>
       <div id="favorites-list"></div>
     </section>
 
     <!-- Recommended -->
-    <section id="tab-recommended" class="tab-section" aria-labelledby="Recommended for You" style="display:none;">
-      <h2>Recommended for you</h2>
-      <div class="recommendation-actions">
-        <button id="refresh-recommendations" class="btn">Refresh recommendations</button>
-      </div>
+    <section id="tab-recommended" class="tab-section" style="display:none;">
+      <h2>Recommended for You</h2>
+      <button id="refresh-recommendations" class="btn">Refresh</button>
       <div id="recommendations-list"></div>
     </section>
 
-    <!-- Weekly Meal Plan -->
-    <section id="tab-weekly" class="tab-section" aria-labelledby="Weekly Meal Plan" style="display:none;">
-      <h2>Weekly meal plan</h2>
-      <div class="plan-actions">
-        <label class="inline">
-          <span>Days:</span>
-          <select id="plan-days">
-            <option value="5">5 (Mon–Fri)</option>
-            <option value="7">7 (Full week)</option>
-          </select>
-        </label>
-        <button id="generate-plan" class="btn">Generate plan</button>
-      </div>
+    <!-- Weekly Plan -->
+    <section id="tab-weekly" class="tab-section" style="display:none;">
+      <h2>Weekly Meal Plan</h2>
+      <label>
+        Days:
+        <select id="plan-days">
+          <option value="5">5</option>
+          <option value="7">7</option>
+        </select>
+      </label>
+      <button id="generate-plan" class="btn">Generate</button>
       <div id="weekly-plan"></div>
-      <p id="weekly-plan-empty" class="muted" style="display:none;">Not enough recipes to build a full plan. Add more favorites or recipes.</p>
+      <p id="weekly-plan-empty" style="display:none;">Not enough recipes to build a plan.</p>
     </section>
 
     <!-- Detail View -->
     <section id="recipe-detail-section" class="detail-section" style="display:none;">
       <button id="back-to-list" class="btn back">← Back</button>
       <h2 id="detail-title"></h2>
-
-      <div class="detail-meta muted" id="detail-meta"></div>
-
+      <div id="detail-meta"></div>
       <h3>Ingredients</h3>
       <ul id="detail-ingredients"></ul>
-
       <h3>Steps</h3>
       <ol id="detail-steps"></ol>
     </section>
   </main>
 
-  <footer class="muted">
+  <footer>
     <p></p>
   </footer>
 
