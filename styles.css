@@ -113,7 +113,32 @@ h2 {
 .btn:hover { background: var(--accent-strong); }
 .btn:active { transform: translateY(1px); }
 .btn.back { margin-bottom: 1rem; }
-.btn.small { font-size: 0.85rem; padding: 0.25rem 0.5rem; }
+.btn.small { padding: 0.25rem 0.5rem; font-size: 0.8rem; }
+
+/* -------------------- Ingredient Input -------------------- */
+#ingredient-input-area {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#ingredient-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+/* -------------------- Current Ingredients -------------------- */
+#current-ingredients {
+  margin-bottom: 1rem;
+}
+
+#current-ingredients p {
+  margin: 0;
+  font-style: italic;
+  color: var(--muted);
+}
 
 /* -------------------- Recipe Cards -------------------- */
 .recipe-card {
