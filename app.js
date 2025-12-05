@@ -44,6 +44,15 @@ const myIngredientsListEl = document.getElementById("my-ingredients-list");
 const shoppingListItemsEl = document.getElementById("shopping-list-items");
 const shoppingListMessageEl = document.getElementById("shopping-list-message");
 
+// Weekly Meal Plan
+const mealPlanListEl = document.getElementById("meal-plan-list");
+const mealPlanMessageEl = document.getElementById("meal-plan-message");
+const generateMealPlanButtonEl = document.getElementById(
+  "generate-meal-plan-button"
+);
+generateMealPlanButtonEl.addEventListener("click", generateMealPlan);
+
+
 // --- Event listeners for "My Ingredients" ---
 
 addIngredientButtonEl.addEventListener("click", addIngredient);
@@ -234,6 +243,69 @@ function showShoppingList(recipe) {
     shoppingListItemsEl.appendChild(li);
   });
 }
+
+// --- Weekly Meal Plan logic ---
+
+// Simple approach:
+// - We build a 5-day plan (Mon–Fri)
+// - Prefer favorite recipes if there are enough
+// - Otherwise fill with other recipes
+// - Avoid repeating the same recipe if possible
+
+function generateMealPlan() {
+  mealPlanListEl.innerHTML = "";
+
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+  // Start from favorites if there are any
+  const favoriteRecipes = recipes.filter((recipe) =>
+    favoriteIds.includes(recipe.id)
+  );
+
+  // Copy arrays so we don't mutate originals
+  const availableFavorites = [...favoriteRecipes];
+  const availableOthers = recipes.filter(
+    (recipe) => !favoriteIds.includes(recipe.id)
+  );
+
+  if (recipes.length === 0) {
+    mealPlanMessageEl.textContent =
+      "No recipes available to build a meal plan yet.";
+    return;
+  }
+
+  mealPlanMessageEl.textContent =
+    "Here is your suggested plan for the week:";
+
+  days.forEach((day) => {
+    let chosenRecipe = null;
+
+    if (availableFavorites.length > 0) {
+      // Use a favorite first
+      chosenRecipe = availableFavorites.shift();
+    } else if (availableOthers.length > 0) {
+      // Fall back to non-favorites
+      chosenRecipe = availableOthers.shift();
+    } else {
+      // If we run out, just reuse any recipe
+      chosenRecipe = recipes[Math.floor(Math.random() * recipes.length)];
+    }
+
+    const li = document.createElement("li");
+
+    const daySpan = document.createElement("span");
+    daySpan.className = "meal-plan-day";
+    daySpan.textContent = day + ":";
+
+    const recipeSpan = document.createElement("span");
+    recipeSpan.textContent = chosenRecipe.name;
+
+    li.appendChild(daySpan);
+    li.appendChild(recipeSpan);
+    mealPlanListEl.appendChild(li);
+  });
+}
+
 
 // --- Initial render when the page loads ---
 renderMyIngredients();
