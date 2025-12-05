@@ -1,4 +1,4 @@
-// Your existing recipes array (unchanged)
+// -------------------- Recipe Data --------------------
 const recipes = [
   {
     id: 1,
@@ -36,107 +36,43 @@ const recipes = [
   }
 ];
 
+// -------------------- State --------------------
 let favoriteIds = [];
-
 let userHistory = {
-  viewed: [],              
+  viewed: [],
   favorites: [...favoriteIds]
 };
 
+// -------------------- Element References --------------------
 const recipesListEl = document.getElementById("recipes-list");
 const favoritesListEl = document.getElementById("favorites-list");
 const favoritesEmptyMessageEl = document.getElementById("favorites-empty-message");
+const recommendationsListEl = document.getElementById("recommendations-list");
 
-// -------------------- NEW: Recipe Detail View --------------------
-// Add after your element references
-
-function showRecipeDetail(recipeId) {
-  const recipe = recipes.find(r => r.id === recipeId);
-  if (!recipe) return;
-
-  // Hide other sections
-  document.getElementById("recipes-list").parentElement.style.display = "none";
-  document.getElementById("favorites-list").parentElement.style.display = "none";
-  const recSection = document.getElementById("recommendations-list");
-  if (recSection) recSection.parentElement.style.display = "none";
-
-  // Show detail section
-  const detailSection = document.getElementById("recipe-detail-section");
-  detailSection.style.display = "block";
-
-  // Populate detail content
-  document.getElementById("detail-title").textContent = recipe.name;
-
-  const ingList = document.getElementById("detail-ingredients");
-  ingList.innerHTML = "";
-  recipe.ingredients.forEach(ing => {
-    const li = document.createElement("li");
-    li.textContent = ing;
-    ingList.appendChild(li);
-  });
-
-  const stepList = document.getElementById("detail-steps");
-  stepList.innerHTML = "";
-  recipe.steps.forEach(step => {
-    const li = document.createElement("li");
-    li.textContent = step;
-    stepList.appendChild(li);
-  });
-
-  // Track as viewed
-  if (!userHistory.viewed.includes(recipeId)) {
-    userHistory.viewed.push(recipeId);
-  }
-}
-
-// Back button
-document.getElementById("back-to-list").addEventListener("click", () => {
-  document.getElementById("recipes-list").parentElement.style.display = "block";
-  document.getElementById("favorites-list").parentElement.style.display = "block";
-  const recSection = document.getElementById("recommendations-list");
-  if (recSection) recSection.parentElement.style.display = "block";
-
-  document.getElementById("recipe-detail-section").style.display = "none";
-});
-
-// -------------------- END Recipe Detail View --------------------
-
-
-// Render all recipes with a favorite button
+// -------------------- Render Functions --------------------
 function renderRecipes() {
   recipesListEl.innerHTML = "";
 
-  recipes.forEach((recipe) => {
+  recipes.forEach(recipe => {
     const card = document.createElement("div");
     card.className = "recipe-card";
-
-    // When card is clicked, show recipe detail
-    card.addEventListener("click", () => {
-      showRecipeDetail(recipe.id);
-    });
 
     const header = document.createElement("div");
     header.className = "recipe-header";
 
     const title = document.createElement("h3");
     title.textContent = recipe.name;
+    title.addEventListener("click", () => showRecipeDetail(recipe.id));
 
     const favButton = document.createElement("button");
     favButton.className = "favorite-button";
+    favButton.textContent = favoriteIds.includes(recipe.id) ? "★ Favorited" : "☆ Favorite";
+    if (favoriteIds.includes(recipe.id)) favButton.classList.add("favorited");
 
-    const isFavorite = favoriteIds.includes(recipe.id);
-    favButton.textContent = isFavorite ? "★ Favorited" : "☆ Favorite";
-    if (isFavorite) favButton.classList.add("favorited");
-
-    // Favorite button click (unchanged)
-    favButton.addEventListener("click", (e) => {
-      e.stopPropagation(); // prevent card click triggering detail view
+    // Favorite toggle
+    favButton.addEventListener("click", e => {
+      e.stopPropagation();
       toggleFavorite(recipe.id);
-    });
-
-    // Navigate to detail view when clicking title
-    title.addEventListener("click", () => {
-      showRecipeDetail(recipe.id);
     });
 
     header.appendChild(title);
@@ -151,13 +87,10 @@ function renderRecipes() {
   });
 }
 
-// Render favorites (unchanged)
 function renderFavorites() {
   favoritesListEl.innerHTML = "";
 
-  const favoriteRecipes = recipes.filter((recipe) =>
-    favoriteIds.includes(recipe.id)
-  );
+  const favoriteRecipes = recipes.filter(recipe => favoriteIds.includes(recipe.id));
 
   if (favoriteRecipes.length === 0) {
     favoritesEmptyMessageEl.style.display = "block";
@@ -166,7 +99,7 @@ function renderFavorites() {
 
   favoritesEmptyMessageEl.style.display = "none";
 
-  favoriteRecipes.forEach((recipe) => {
+  favoriteRecipes.forEach(recipe => {
     const card = document.createElement("div");
     card.className = "recipe-card";
 
@@ -175,14 +108,12 @@ function renderFavorites() {
 
     const title = document.createElement("h3");
     title.textContent = recipe.name;
+    title.addEventListener("click", () => showRecipeDetail(recipe.id));
 
     const removeButton = document.createElement("button");
     removeButton.className = "favorite-button favorited";
     removeButton.textContent = "Remove ★";
-
-    removeButton.addEventListener("click", () => {
-      toggleFavorite(recipe.id);
-    });
+    removeButton.addEventListener("click", () => toggleFavorite(recipe.id));
 
     header.appendChild(title);
     header.appendChild(removeButton);
@@ -196,30 +127,35 @@ function renderFavorites() {
   });
 }
 
-// Toggle favorite (unchanged)
+// -------------------- Favorite Toggle --------------------
 function toggleFavorite(recipeId) {
   if (favoriteIds.includes(recipeId)) {
-    favoriteIds = favoriteIds.filter((id) => id !== recipeId);
+    favoriteIds = favoriteIds.filter(id => id !== recipeId);
   } else {
     favoriteIds.push(recipeId);
   }
 
   userHistory.favorites = [...favoriteIds];
-  userHistory.favorites = [...favoriteIds]; // keep history updated
 
   renderRecipes();
   renderFavorites();
   renderRecommendations();
 }
 
+// -------------------- Recipe Detail View --------------------
 function showRecipeDetail(recipeId) {
   const recipe = recipes.find(r => r.id === recipeId);
   if (!recipe) return;
 
-  userHistory.viewed.push(recipeId);
+  // Track viewed
+  if (!userHistory.viewed.includes(recipeId)) {
+    userHistory.viewed.push(recipeId);
+  }
 
   // Clear main list and show detail
   recipesListEl.innerHTML = "";
+  favoritesListEl.parentElement.style.display = "none";
+  recommendationsListEl.parentElement.style.display = "none";
 
   const detailCard = document.createElement("div");
   detailCard.className = "recipe-card";
@@ -230,6 +166,8 @@ function showRecipeDetail(recipeId) {
   const backButton = document.createElement("button");
   backButton.textContent = "← Back";
   backButton.addEventListener("click", () => {
+    favoritesListEl.parentElement.style.display = "block";
+    recommendationsListEl.parentElement.style.display = "block";
     renderRecipes();
     renderFavorites();
     renderRecommendations();
@@ -257,40 +195,23 @@ function showRecipeDetail(recipeId) {
   detailCard.appendChild(stepsList);
 
   recipesListEl.appendChild(detailCard);
-
-  renderRecommendations();
 }
 
+// -------------------- Recommendations --------------------
 function getRecommendations() {
   const interactedIds = [...new Set([...userHistory.viewed, ...userHistory.favorites])];
-
-  let recommended = recipes.filter(r => !interactedIds.includes(r.id));
-
-  if (recommended.length === 0) return [];
-
+  const recommended = recipes.filter(r => !interactedIds.includes(r.id));
   return recommended.slice(0, 5);
 }
 
 function renderRecommendations() {
-  let recSection = document.getElementById("recommendations-section");
-  if (!recSection) {
-    // Create section if it doesn't exist
-    recSection = document.createElement("section");
-    recSection.id = "recommendations-section";
-    const h2 = document.createElement("h2");
-    h2.textContent = "Recommended for You";
-    recSection.appendChild(h2);
-    recipesListEl.parentNode.appendChild(recSection);
-  }
-
-  // Clear previous recommendations
-  recSection.innerHTML = "<h2>Recommended for You</h2>";
+  recommendationsListEl.innerHTML = "";
 
   const recs = getRecommendations();
   if (recs.length === 0) {
     const p = document.createElement("p");
     p.textContent = "No recommendations yet. Interact with some recipes!";
-    recSection.appendChild(p);
+    recommendationsListEl.appendChild(p);
     return;
   }
 
@@ -303,14 +224,11 @@ function renderRecommendations() {
     title.addEventListener("click", () => showRecipeDetail(recipe.id));
 
     card.appendChild(title);
-    recSection.appendChild(card);
+    recommendationsListEl.appendChild(card);
   });
 }
 
+// -------------------- Initial Render --------------------
 renderRecipes();
 renderFavorites();
 renderRecommendations();
-// Initial render
-renderRecipes();
-renderFavorites();
-
