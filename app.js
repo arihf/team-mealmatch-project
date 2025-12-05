@@ -1,10 +1,15 @@
-// -------------------- Mock Recipe Data --------------------
+// -------------------- Recipe Data --------------------
 const recipes = [
   {
     id: 1,
     name: "Spaghetti Marinara",
     description: "Simple pasta with tomato sauce.",
     ingredients: ["pasta", "tomato sauce", "salt", "olive oil"],
+    steps: [
+      "Boil water and cook pasta according to package instructions.",
+      "Heat olive oil in a pan and add tomato sauce.",
+      "Combine pasta with sauce and serve."
+    ],
     tags: ["vegetarian", "quick"]
   },
   {
@@ -12,6 +17,12 @@ const recipes = [
     name: "Veggie Stir-Fry",
     description: "Colorful vegetables sautéed with soy sauce.",
     ingredients: ["carrot", "broccoli", "soy sauce", "oil"],
+    steps: [
+      "Chop all vegetables into bite-sized pieces.",
+      "Heat oil in a pan over medium heat.",
+      "Add vegetables and stir-fry for 5–7 minutes.",
+      "Add soy sauce and cook for another 2 minutes."
+    ],
     tags: ["vegetarian", "low-fat", "quick"]
   },
   {
@@ -19,174 +30,174 @@ const recipes = [
     name: "Chicken Tacos",
     description: "Tortillas filled with seasoned chicken and toppings.",
     ingredients: ["chicken", "taco shells", "lettuce", "cheese", "salsa"],
+    steps: [
+      "Cook chicken in a pan with your favorite seasoning.",
+      "Warm taco shells in the oven.",
+      "Assemble tacos with chicken, lettuce, cheese, and salsa."
+    ],
     tags: ["high-protein"]
   },
   {
     id: 4,
     name: "Lo Mein",
-    description: "Chinese-style noodles with vegetables.",
-    ingredients: ["noodles", "soy sauce", "carrot", "cabbage", "oil"],
+    description: "Chinese-style noodles with veggies.",
+    ingredients: ["noodles", "soy sauce", "carrot", "bell pepper", "onion"],
+    steps: [
+      "Cook noodles according to package.",
+      "Stir-fry veggies in a pan.",
+      "Add noodles and soy sauce, toss to combine."
+    ],
     tags: ["vegetarian"]
   },
   {
     id: 5,
     name: "Chia Pudding",
-    description: "Healthy chia seed dessert with milk.",
+    description: "A simple healthy dessert.",
     ingredients: ["chia seeds", "almond milk", "honey", "vanilla extract"],
+    steps: [
+      "Mix chia seeds with almond milk.",
+      "Add honey and vanilla, stir well.",
+      "Refrigerate 2–4 hours until set."
+    ],
     tags: ["vegan", "gluten-free"]
   },
   {
     id: 6,
     name: "Cheese Enchiladas",
-    description: "Corn tortillas filled with cheese and topped with sauce.",
-    ingredients: ["corn tortillas", "cheese", "enchilada sauce", "onion"],
+    description: "Classic Mexican enchiladas with cheese.",
+    ingredients: ["tortillas", "cheese", "enchilada sauce"],
+    steps: [
+      "Fill tortillas with cheese.",
+      "Roll and place in baking dish.",
+      "Pour sauce over and bake 20 min at 350°F."
+    ],
     tags: ["vegetarian"]
   },
   {
     id: 7,
     name: "Chicken Noodle Soup",
-    description: "Comforting soup with chicken and noodles.",
-    ingredients: ["chicken", "noodles", "carrot", "celery", "salt"],
+    description: "Warm comforting soup.",
+    ingredients: ["chicken", "noodles", "carrot", "celery", "onion", "broth"],
+    steps: [
+      "Cook chicken in broth.",
+      "Add chopped veggies.",
+      "Add noodles and cook until tender."
+    ],
     tags: ["high-protein"]
   },
   {
     id: 8,
     name: "Mediterranean Salad",
-    description: "Fresh salad with olives, cucumber, and tomatoes.",
-    ingredients: ["cucumber", "tomato", "olives", "olive oil", "lemon juice"],
-    tags: ["vegan", "gluten-free"]
-  },
-  {
-    id: 9,
-    name: "Vegetarian Quesadilla",
-    description: "Tortilla with cheese and vegetables.",
-    ingredients: ["tortilla", "cheese", "bell pepper", "onion"],
-    tags: ["vegetarian"]
-  },
-  {
-    id: 10,
-    name: "Vegan Buddha Bowl",
-    description: "Healthy bowl with grains and vegetables.",
-    ingredients: ["quinoa", "chickpeas", "spinach", "avocado", "carrot"],
+    description: "Fresh, vegan, and gluten-free salad.",
+    ingredients: ["lettuce", "cucumber", "tomato", "olive oil", "lemon juice"],
+    steps: [
+      "Chop vegetables.",
+      "Mix with olive oil and lemon juice.",
+      "Serve chilled."
+    ],
     tags: ["vegan", "gluten-free"]
   }
 ];
 
 // -------------------- State --------------------
 let ingredientsList = [];
-let dietaryFilters = [];
 let favoriteIds = [];
+let dietaryFilters = [];
 
-// -------------------- Element References --------------------
-const tabs = document.querySelectorAll(".tab-button");
+// -------------------- Elements --------------------
 const recipesListEl = document.getElementById("recipes-list");
 const favoritesListEl = document.getElementById("favorites-list");
 const favoritesEmptyMessageEl = document.getElementById("favorites-empty-message");
 const recommendationsListEl = document.getElementById("recommendations-list");
+const noResultsEl = document.getElementById("no-results");
 const weeklyPlanEl = document.getElementById("weekly-plan");
 const weeklyPlanEmptyEl = document.getElementById("weekly-plan-empty");
 const planDaysEl = document.getElementById("plan-days");
-const noResultsEl = document.getElementById("no-results");
 
-// Ingredient input elements
-const ingredientInput = document.createElement("input");
-ingredientInput.type = "text";
-ingredientInput.placeholder = "Type an ingredient";
-ingredientInput.id = "ingredient-input";
-const addIngredientBtn = document.createElement("button");
-addIngredientBtn.textContent = "Add";
-addIngredientBtn.className = "btn";
-const ingredientArea = document.createElement("div");
-ingredientArea.id = "ingredient-input-area";
-ingredientArea.appendChild(ingredientInput);
-ingredientArea.appendChild(addIngredientBtn);
-recipesListEl.parentNode.insertBefore(ingredientArea, recipesListEl);
-
-const currentIngredientsEl = document.createElement("div");
-currentIngredientsEl.id = "current-ingredients";
-ingredientArea.parentNode.insertBefore(currentIngredientsEl, recipesListEl);
-
-// Dietary filter elements
-const dietaryFilterEls = document.querySelectorAll("#dietary-filters input[type='checkbox']");
-const clearFiltersBtn = document.getElementById("clear-filters");
-
-// -------------------- Tab Functionality --------------------
+// Tabs
+const tabs = document.querySelectorAll(".tab-button");
 tabs.forEach(tab => {
   tab.addEventListener("click", () => {
-    tabs.forEach(t => t.classList.remove("active"));
+    document.querySelector(".tab-button.active").classList.remove("active");
     tab.classList.add("active");
-
-    document.querySelectorAll(".tab-section, .detail-section").forEach(sec => sec.style.display = "none");
-    document.getElementById(tab.dataset.tab).style.display = "block";
+    const tabId = tab.dataset.tab;
+    document.querySelectorAll(".tab-section, .detail-section").forEach(s => s.style.display = "none");
+    document.getElementById(tabId).style.display = "block";
   });
 });
 
-// -------------------- Ingredients Functionality --------------------
+// -------------------- Ingredient Input --------------------
+const ingredientInputContainer = document.createElement("div");
+ingredientInputContainer.id = "ingredient-input-container";
+ingredientInputContainer.innerHTML = `
+  <input type="text" id="ingredient-input" placeholder="Type an ingredient"/>
+  <button id="add-ingredient" class="btn small">Add</button>
+  <ul id="ingredients-list-ui"></ul>
+`;
+document.getElementById("tab-all").prepend(ingredientInputContainer);
+
+const ingredientInputEl = document.getElementById("ingredient-input");
+const addIngredientBtn = document.getElementById("add-ingredient");
+const ingredientsListUI = document.getElementById("ingredients-list-ui");
+
+addIngredientBtn.addEventListener("click", addIngredient);
+ingredientInputEl.addEventListener("keydown", e => { if (e.key === "Enter") addIngredient(); });
+
+function addIngredient() {
+  const val = ingredientInputEl.value.trim().toLowerCase();
+  if (!val || ingredientsList.includes(val)) return;
+  ingredientsList.push(val);
+  ingredientInputEl.value = "";
+  renderIngredients();
+  renderRecipes();
+}
+
 function renderIngredients() {
-  currentIngredientsEl.innerHTML = "";
-  if (ingredientsList.length === 0) {
-    currentIngredientsEl.textContent = "No ingredients added yet.";
-    return;
-  }
-  ingredientsList.forEach((ing, i) => {
-    const p = document.createElement("p");
-    p.textContent = ing;
+  ingredientsListUI.innerHTML = "";
+  ingredientsList.forEach((ing, idx) => {
+    const li = document.createElement("li");
+    li.textContent = ing + " ";
     const removeBtn = document.createElement("button");
     removeBtn.textContent = "x";
     removeBtn.className = "btn small";
-    removeBtn.style.marginLeft = "0.5rem";
     removeBtn.addEventListener("click", () => {
-      ingredientsList.splice(i, 1);
+      ingredientsList.splice(idx, 1);
       renderIngredients();
       renderRecipes();
     });
-    p.appendChild(removeBtn);
-    currentIngredientsEl.appendChild(p);
+    li.appendChild(removeBtn);
+    ingredientsListUI.appendChild(li);
   });
 }
 
-addIngredientBtn.addEventListener("click", () => {
-  const val = ingredientInput.value.trim().toLowerCase();
-  if (val && !ingredientsList.includes(val)) {
-    ingredientsList.push(val);
-    ingredientInput.value = "";
-    renderIngredients();
-    renderRecipes();
-  }
-});
-
-ingredientInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") addIngredientBtn.click();
-});
-
 // -------------------- Dietary Filters --------------------
-dietaryFilterEls.forEach(checkbox => {
-  checkbox.addEventListener("change", () => {
-    dietaryFilters = Array.from(dietaryFilterEls).filter(cb => cb.checked).map(cb => cb.value);
+const dietaryCheckboxes = document.querySelectorAll("#dietary-filters input[type=checkbox]");
+dietaryCheckboxes.forEach(cb => {
+  cb.addEventListener("change", () => {
+    dietaryFilters = Array.from(dietaryCheckboxes).filter(c => c.checked).map(c => c.value);
     renderRecipes();
   });
 });
 
-clearFiltersBtn.addEventListener("click", () => {
-  dietaryFilterEls.forEach(cb => cb.checked = false);
+document.getElementById("clear-filters").addEventListener("click", () => {
   dietaryFilters = [];
+  dietaryCheckboxes.forEach(c => c.checked = false);
   renderRecipes();
 });
 
 // -------------------- Render Recipes --------------------
 function renderRecipes() {
   recipesListEl.innerHTML = "";
-  let filtered = recipes.filter(recipe => {
-    // Ingredient match rule: at least 1 ingredient matches
-    const ingredientMatch = ingredientsList.length === 0 || recipe.ingredients.some(ing => ingredientsList.includes(ing.toLowerCase()));
-    // Dietary match
-    const dietaryMatch = dietaryFilters.length === 0 || dietaryFilters.every(tag => recipe.tags.includes(tag));
-    return ingredientMatch && dietaryMatch;
+  let filtered = recipes.filter(r => {
+    // Match ingredients (at least one)
+    const hasIngredient = ingredientsList.length === 0 || r.ingredients.some(ing => ingredientsList.includes(ing.toLowerCase()));
+    // Match dietary filters
+    const hasDiet = dietaryFilters.length === 0 || dietaryFilters.every(tag => r.tags.includes(tag));
+    return hasIngredient && hasDiet;
   });
 
   if (filtered.length === 0) {
     noResultsEl.style.display = "block";
-    return;
   } else {
     noResultsEl.style.display = "none";
   }
@@ -197,70 +208,49 @@ function renderRecipes() {
 
     const header = document.createElement("div");
     header.className = "recipe-header";
-    const title = document.createElement("h3");
-    title.textContent = recipe.name;
-    header.appendChild(title);
-
+    const h3 = document.createElement("h3");
+    h3.textContent = recipe.name;
     const favBtn = document.createElement("button");
     favBtn.className = "favorite-button";
-    favBtn.textContent = favoriteIds.includes(recipe.id) ? "★" : "☆";
-    if (favoriteIds.includes(recipe.id)) favBtn.classList.add("favorited");
-    favBtn.addEventListener("click", () => {
-      if (favoriteIds.includes(recipe.id)) {
-        favoriteIds = favoriteIds.filter(id => id !== recipe.id);
-      } else {
-        favoriteIds.push(recipe.id);
-      }
-      renderRecipes();
-      renderFavorites();
-    });
+    favBtn.innerHTML = favoriteIds.includes(recipe.id) ? "★" : "☆";
+    favBtn.addEventListener("click", () => toggleFavorite(recipe.id, favBtn));
+    header.appendChild(h3);
     header.appendChild(favBtn);
-
     card.appendChild(header);
 
-    const desc = document.createElement("p");
-    desc.textContent = recipe.description;
-    card.appendChild(desc);
+    const p = document.createElement("p");
+    p.textContent = recipe.description;
+    card.appendChild(p);
 
     recipesListEl.appendChild(card);
   });
 }
 
 // -------------------- Favorites --------------------
+function toggleFavorite(id, btn) {
+  if (favoriteIds.includes(id)) {
+    favoriteIds = favoriteIds.filter(f => f !== id);
+    btn.textContent = "☆";
+  } else {
+    favoriteIds.push(id);
+    btn.textContent = "★";
+  }
+  renderFavorites();
+}
+
 function renderFavorites() {
   favoritesListEl.innerHTML = "";
   const favRecipes = recipes.filter(r => favoriteIds.includes(r.id));
   if (favRecipes.length === 0) {
     favoritesEmptyMessageEl.style.display = "block";
-    return;
   } else {
     favoritesEmptyMessageEl.style.display = "none";
   }
+
   favRecipes.forEach(recipe => {
     const card = document.createElement("div");
     card.className = "recipe-card";
-
-    const header = document.createElement("div");
-    header.className = "recipe-header";
-    const title = document.createElement("h3");
-    title.textContent = recipe.name;
-    header.appendChild(title);
-
-    const removeBtn = document.createElement("button");
-    removeBtn.className = "favorite-button favorited";
-    removeBtn.textContent = "★ Remove";
-    removeBtn.addEventListener("click", () => {
-      favoriteIds = favoriteIds.filter(id => id !== recipe.id);
-      renderFavorites();
-      renderRecipes();
-    });
-    header.appendChild(removeBtn);
-
-    card.appendChild(header);
-    const desc = document.createElement("p");
-    desc.textContent = recipe.description;
-    card.appendChild(desc);
-
+    card.textContent = recipe.name;
     favoritesListEl.appendChild(card);
   });
 }
@@ -268,48 +258,50 @@ function renderFavorites() {
 // -------------------- Weekly Plan --------------------
 document.getElementById("generate-plan").addEventListener("click", () => {
   weeklyPlanEl.innerHTML = "";
-  const days = parseInt(planDaysEl.value);
-  const planRecipes = [...recipes]; // copy all recipes
-  if (planRecipes.length < days) {
+  const dayCount = parseInt(planDaysEl.value);
+  const favRecipes = recipes.filter(r => favoriteIds.includes(r.id));
+  if (favRecipes.length < dayCount) {
     weeklyPlanEmptyEl.style.display = "block";
     return;
   } else {
     weeklyPlanEmptyEl.style.display = "none";
   }
 
-  for (let i = 0; i < days; i++) {
-    const recipe = planRecipes[i % planRecipes.length];
-    const card = document.createElement("div");
-    card.className = "plan-card";
-    const h4 = document.createElement("h4");
-    h4.textContent = `Day ${i + 1}: ${recipe.name}`;
-    card.appendChild(h4);
-    const p = document.createElement("p");
-    p.textContent = recipe.description;
-    card.appendChild(p);
-    weeklyPlanEl.appendChild(card);
+  // Shuffle favorites
+  const shuffled = [...favRecipes].sort(() => 0.5 - Math.random());
+
+  for (let i = 0; i < dayCount; i++) {
+    const planCard = document.createElement("div");
+    planCard.className = "plan-card";
+    planCard.innerHTML = `<h4>Day ${i + 1}</h4><p>${shuffled[i].name}</p>`;
+    weeklyPlanEl.appendChild(planCard);
   }
 });
 
 // -------------------- Recommendations --------------------
 document.getElementById("refresh-recommendations").addEventListener("click", () => {
   recommendationsListEl.innerHTML = "";
-  const shuffled = recipes.sort(() => 0.5 - Math.random());
-  const recs = shuffled.slice(0, 3);
+
+  const recipesCopy = [...recipes];
+  for (let i = recipesCopy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [recipesCopy[i], recipesCopy[j]] = [recipesCopy[j], recipesCopy[i]];
+  }
+
+  const recs = recipesCopy.slice(0, 3);
   recs.forEach(recipe => {
     const card = document.createElement("div");
     card.className = "recipe-card";
     const h3 = document.createElement("h3");
     h3.textContent = recipe.name;
-    card.appendChild(h3);
     const p = document.createElement("p");
     p.textContent = recipe.description;
+    card.appendChild(h3);
     card.appendChild(p);
     recommendationsListEl.appendChild(card);
   });
 });
 
 // -------------------- Initial Render --------------------
-renderIngredients();
 renderRecipes();
 renderFavorites();
