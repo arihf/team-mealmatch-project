@@ -1,22 +1,40 @@
-// Simple mock recipe data.
-// Later your team can expand this for the other issues.
 const recipes = [
   {
     id: 1,
     name: "Spaghetti Marinara",
-    description: "Simple pasta with tomato sauce."
+    description: "Simple pasta with tomato sauce.",
+    ingredients: ["pasta", "tomato sauce", "salt", "olive oil"],
+    steps: [
+      "Boil water and cook pasta according to package instructions.",
+      "Heat olive oil in a pan and add tomato sauce.",
+      "Combine pasta with sauce and serve."
+    ]
   },
   {
     id: 2,
     name: "Veggie Stir-Fry",
-    description: "Colorful vegetables sautéed with soy sauce."
+    description: "Colorful vegetables sautéed with soy sauce.",
+    ingredients: ["carrot", "broccoli", "soy sauce", "oil"],
+    steps: [
+      "Chop all vegetables into bite-sized pieces.",
+      "Heat oil in a pan over medium heat.",
+      "Add vegetables and stir-fry for 5-7 minutes.",
+      "Add soy sauce and cook for another 2 minutes."
+    ]
   },
   {
     id: 3,
     name: "Chicken Tacos",
-    description: "Tortillas filled with seasoned chicken and toppings."
+    description: "Tortillas filled with seasoned chicken and toppings.",
+    ingredients: ["chicken", "taco shells", "lettuce", "cheese", "salsa"],
+    steps: [
+      "Cook chicken in a pan with your favorite seasoning.",
+      "Warm taco shells in the oven.",
+      "Assemble tacos with chicken, lettuce, cheese, and salsa."
+    ]
   }
 ];
+
 
 // This will store the IDs of favorite recipes
 let favoriteIds = [];
