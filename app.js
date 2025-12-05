@@ -36,6 +36,90 @@ const recipes = [
       "Assemble tacos with chicken, lettuce, cheese, and salsa."
     ],
     tags: ["high-protein"]
+  },
+  {
+    id: 4,
+    name: "Lo Mein",
+    description: "Stir-fried noodles with vegetables and soy sauce.",
+    ingredients: ["lo mein noodles", "carrot", "bell pepper", "soy sauce", "oil"],
+    steps: [
+      "Cook noodles according to package instructions.",
+      "Stir-fry vegetables in oil for 3–4 minutes.",
+      "Add noodles and soy sauce, toss to combine."
+    ],
+    tags: ["vegetarian", "quick"]
+  },
+  {
+    id: 5,
+    name: "Chia Pudding",
+    description: "Healthy chia seed pudding with almond milk.",
+    ingredients: ["chia seeds", "almond milk", "honey", "vanilla extract"],
+    steps: [
+      "Mix chia seeds, almond milk, honey, and vanilla in a bowl.",
+      "Refrigerate overnight.",
+      "Serve chilled with fruit."
+    ],
+    tags: ["vegan", "gluten-free", "healthy"]
+  },
+  {
+    id: 6,
+    name: "Cheese Enchiladas",
+    description: "Baked tortillas stuffed with cheese and sauce.",
+    ingredients: ["tortillas", "cheese", "enchilada sauce", "onion"],
+    steps: [
+      "Preheat oven to 375°F (190°C).",
+      "Fill tortillas with cheese and roll them up.",
+      "Place in baking dish, cover with enchilada sauce and bake 20 min."
+    ],
+    tags: ["vegetarian"]
+  },
+  {
+    id: 7,
+    name: "Chicken Noodle Soup",
+    description: "Classic comforting chicken noodle soup.",
+    ingredients: ["chicken", "carrot", "celery", "noodles", "chicken broth"],
+    steps: [
+      "Boil chicken in broth until cooked.",
+      "Add vegetables and noodles, cook until tender.",
+      "Season with salt and pepper."
+    ],
+    tags: ["high-protein"]
+  },
+  {
+    id: 8,
+    name: "Mediterranean Salad",
+    description: "Fresh salad with cucumbers, tomatoes, and chickpeas.",
+    ingredients: ["cucumber", "tomato", "chickpeas", "olive oil", "lemon juice"],
+    steps: [
+      "Chop all vegetables and combine in a bowl.",
+      "Add chickpeas, olive oil, lemon juice, salt, and pepper.",
+      "Toss and serve chilled."
+    ],
+    tags: ["vegan", "gluten-free"]
+  },
+  {
+    id: 9,
+    name: "Vegetarian Quesadilla",
+    description: "Cheesy quesadilla with vegetables.",
+    ingredients: ["tortilla", "cheese", "bell pepper", "onion"],
+    steps: [
+      "Place cheese and vegetables on tortilla.",
+      "Fold in half and cook on a pan until golden.",
+      "Cut into wedges and serve."
+    ],
+    tags: ["vegetarian"]
+  },
+  {
+    id: 10,
+    name: "Vegan Curry",
+    description: "Rich and creamy vegan curry with coconut milk.",
+    ingredients: ["coconut milk", "chickpeas", "spinach", "curry powder", "onion"],
+    steps: [
+      "Sauté onion and curry powder in oil.",
+      "Add coconut milk and chickpeas, simmer 10 minutes.",
+      "Add spinach and cook until wilted."
+    ],
+    tags: ["vegan", "gluten-free"]
   }
 ];
 
@@ -55,14 +139,10 @@ const noRecommendationsEl = document.getElementById("no-recommendations");
 const weeklyPlanEl = document.getElementById("weekly-plan");
 const weeklyPlanEmptyEl = document.getElementById("weekly-plan-empty");
 const planDaysEl = document.getElementById("plan-days");
-
-// Dietary filters
 const dietaryCheckboxes = document.querySelectorAll("#dietary-filters input[type='checkbox']");
 const clearFiltersBtn = document.getElementById("clear-filters");
 
 // -------------------- Functions --------------------
-
-// Render recipes in a container
 function renderRecipes(arr, container) {
   container.innerHTML = "";
   if (arr.length === 0) return false;
@@ -92,7 +172,6 @@ function renderRecipes(arr, container) {
   return true;
 }
 
-// Show recipe detail
 function showDetail(id) {
   const recipe = recipes.find(r => r.id === id);
   if (!recipe) return;
@@ -105,7 +184,6 @@ function showDetail(id) {
   document.getElementById(currentTab).style.display = "none";
 }
 
-// Toggle favorite
 function toggleFavorite(id) {
   if (favoriteIds.includes(id)) {
     favoriteIds = favoriteIds.filter(f => f !== id);
@@ -115,13 +193,11 @@ function toggleFavorite(id) {
   renderAll();
 }
 
-// Apply dietary filters
 function filterByDietary(arr) {
   if (dietaryFilters.length === 0) return arr;
   return arr.filter(recipe => dietaryFilters.every(tag => recipe.tags.includes(tag)));
 }
 
-// Render weekly plan
 function generateWeeklyPlan() {
   const favorites = recipes.filter(r => favoriteIds.includes(r.id));
   const days = parseInt(planDaysEl.value);
@@ -143,7 +219,6 @@ function generateWeeklyPlan() {
   }
 }
 
-// Render recommendations (non-favorites)
 function renderRecommendations() {
   const recommended = recipes.filter(r => !favoriteIds.includes(r.id));
   recommendationsListEl.innerHTML = "";
@@ -156,7 +231,6 @@ function renderRecommendations() {
   }
 }
 
-// Render all sections
 function renderAll() {
   const filtered = filterByDietary(recipes);
   const hasRecipes = renderRecipes(filtered, recipesListEl);
@@ -175,8 +249,6 @@ function renderAll() {
 }
 
 // -------------------- Event Listeners --------------------
-
-// Tabs
 tabs.forEach(tab => {
   tab.addEventListener("click", () => {
     document.getElementById(currentTab).style.display = "none";
@@ -187,7 +259,6 @@ tabs.forEach(tab => {
   });
 });
 
-// Favorite button
 document.addEventListener("click", e => {
   if (e.target.classList.contains("favorite-button")) {
     const id = parseInt(e.target.dataset.id);
@@ -195,7 +266,6 @@ document.addEventListener("click", e => {
   }
 });
 
-// Dietary filters
 dietaryCheckboxes.forEach(cb => {
   cb.addEventListener("change", () => {
     dietaryFilters = Array.from(dietaryCheckboxes).filter(i => i.checked).map(i => i.value);
@@ -203,20 +273,16 @@ dietaryCheckboxes.forEach(cb => {
   });
 });
 
-// Clear filters
 clearFiltersBtn.addEventListener("click", () => {
   dietaryCheckboxes.forEach(cb => cb.checked = false);
   dietaryFilters = [];
   renderAll();
 });
 
-// Weekly plan
 document.getElementById("generate-plan").addEventListener("click", generateWeeklyPlan);
 
-// Refresh recommendations
 document.getElementById("refresh-recommendations").addEventListener("click", renderAll);
 
-// Back from detail
 document.getElementById("back-to-list").addEventListener("click", () => {
   document.getElementById("recipe-detail-section").style.display = "none";
   document.getElementById(currentTab).style.display = "block";
