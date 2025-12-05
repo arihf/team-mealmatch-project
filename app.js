@@ -147,15 +147,12 @@ function showRecipeDetail(recipeId) {
   const recipe = recipes.find(r => r.id === recipeId);
   if (!recipe) return;
 
-  // Track viewed
   if (!userHistory.viewed.includes(recipeId)) {
     userHistory.viewed.push(recipeId);
   }
 
-  // Clear main list and show detail
+  // Clear recipes list but leave favorites and recommendations visible
   recipesListEl.innerHTML = "";
-  favoritesListEl.parentElement.style.display = "none";
-  recommendationsListEl.parentElement.style.display = "none";
 
   const detailCard = document.createElement("div");
   detailCard.className = "recipe-card";
@@ -164,10 +161,8 @@ function showRecipeDetail(recipeId) {
   title.textContent = recipe.name;
 
   const backButton = document.createElement("button");
-  backButton.textContent = "← Back";
+  backButton.textContent = "← Back to Recipes";
   backButton.addEventListener("click", () => {
-    favoritesListEl.parentElement.style.display = "block";
-    recommendationsListEl.parentElement.style.display = "block";
     renderRecipes();
     renderFavorites();
     renderRecommendations();
@@ -187,11 +182,18 @@ function showRecipeDetail(recipeId) {
     stepsList.appendChild(li);
   });
 
+  // Add sections
   detailCard.appendChild(backButton);
   detailCard.appendChild(title);
-  detailCard.appendChild(document.createElement("h4").appendChild(document.createTextNode("Ingredients")));
+  
+  const ingHeader = document.createElement("h4");
+  ingHeader.textContent = "Ingredients";
+  detailCard.appendChild(ingHeader);
   detailCard.appendChild(ingredientsList);
-  detailCard.appendChild(document.createElement("h4").appendChild(document.createTextNode("Steps")));
+
+  const stepsHeader = document.createElement("h4");
+  stepsHeader.textContent = "Steps";
+  detailCard.appendChild(stepsHeader);
   detailCard.appendChild(stepsList);
 
   recipesListEl.appendChild(detailCard);
