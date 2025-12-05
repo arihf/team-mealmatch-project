@@ -1,61 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>MealMatch</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header>
-      <h1>MealMatch</h1>
-      <p>Find recipes and save your favorites</p>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MealMatch</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <header>
+    <h1>MealMatch</h1>
+    <p>Simple, good-looking recipes with favorites, recommendations, and a weekly plan.</p>
+  </header>
 
-    <main>
-      <section>
-        <h2>My Ingredients</h2>
-        <div id="ingredient-input-row">
-          <input
-            id="ingredient-input"
-            type="text"
-            placeholder="Type an ingredient you have (e.g., chicken)"
-          />
-          <button id="add-ingredient-button">Add</button>
-        </div>
-        <ul id="my-ingredients-list"></ul>
-      </section>
+  <nav class="tabs">
+    <button class="tab-button active" data-tab="tab-all">All Recipes</button>
+    <button class="tab-button" data-tab="tab-favorites">Favorites</button>
+    <button class="tab-button" data-tab="tab-recommended">Recommended for You</button>
+    <button class="tab-button" data-tab="tab-weekly">Weekly Meal Plan</button>
+  </nav>
 
-      <section>
-        <h2>All Recipes</h2>
-        <div id="recipes-list"></div>
-      </section>
+  <main>
+    <!-- All Recipes -->
+    <section id="tab-all" class="tab-section">
+      <h2>All recipes</h2>
 
-      <section>
-        <h2>Favorite Recipes</h2>
-        <p id="favorites-empty-message">
-          No favorites yet. Click a star to save one!
-        </p>
-        <div id="favorites-list"></div>
-      </section>
+      <!-- Dietary Filters -->
+      <div id="dietary-filters">
+        <label><input type="checkbox" value="vegan"> Vegan</label>
+        <label><input type="checkbox" value="vegetarian"> Vegetarian</label>
+        <label><input type="checkbox" value="gluten-free"> Gluten-Free</label>
+        <label><input type="checkbox" value="dairy-free"> Dairy-Free</label>
+        <button id="clear-filters" class="btn small">Clear</button>
+      </div>
 
-      <section>
-        <h2>Shopping List</h2>
-        <p id="shopping-list-message">
-          Select a recipe to see which ingredients you're missing.
-        </p>
-        <ul id="shopping-list-items"></ul>
-      </section>
+      <div id="recipes-list"></div>
+      <p id="no-results" class="muted" style="display:none;">No recipes match your filters.</p>
+    </section>
 
-            <section>
-        <h2>Weekly Meal Plan</h2>
-        <p id="meal-plan-message">
-          Click "Generate Meal Plan" to get suggestions for the week.
-        </p>
-        <button id="generate-meal-plan-button">Generate Meal Plan</button>
-        <ul id="meal-plan-list"></ul>
-      </section>
-    </main>
+    <!-- Favorites -->
+    <section id="tab-favorites" class="tab-section" style="display:none;">
+      <h2>Your favorites</h2>
+      <p id="favorites-empty-message">No favorites yet. Tap the ☆ to add some.</p>
+      <div id="favorites-list"></div>
+    </section>
 
-    <script src="app.js"></script>
-  </body>
+    <!-- Recommended -->
+    <section id="tab-recommended" class="tab-section" style="display:none;">
+      <h2>Recommended for you</h2>
+      <button id="refresh-recommendations" class="btn">Refresh recommendations</button>
+      <div id="recommendations-list"></div>
+    </section>
+
+    <!-- Weekly Meal Plan -->
+    <section id="tab-weekly" class="tab-section" style="display:none;">
+      <h2>Weekly meal plan</h2>
+      <label>
+        Days:
+        <select id="plan-days">
+          <option value="5">5 (Mon–Fri)</option>
+          <option value="7">7 (Full week)</option>
+        </select>
+      </label>
+      <button id="generate-plan" class="btn">Generate plan</button>
+      <div id="weekly-plan"></div>
+      <p id="weekly-plan-empty" class="muted" style="display:none;">Not enough recipes to build a full plan. Add more favorites or recipes.</p>
+    </section>
+
+    <!-- Detail View -->
+    <section id="recipe-detail-section" class="detail-section" style="display:none;">
+      <button id="back-to-list" class="btn back">← Back</button>
+      <h2 id="detail-title"></h2>
+
+      <div class="detail-meta muted" id="detail-meta"></div>
+
+      <h3>Ingredients</h3>
+      <ul id="detail-ingredients"></ul>
+
+      <h3>Steps</h3>
+      <ol id="detail-steps"></ol>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
 </html>
