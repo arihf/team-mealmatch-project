@@ -1,92 +1,108 @@
-:root {
-  --bg: #f7f5f2;
-  --text: #333;
-  --accent: #ff8a5c;
-  --accent-strong: #ff5c2c;
-  --card: #fff;
-  --card-soft: #fff8f5;
-  --border: #ddd;
-}
-
 body {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-family: Arial, sans-serif;
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
+  padding: 0;
+  background: #f7f7f7;
 }
 
 header {
-  background: var(--accent);
+  background: #ff8a5c;
   color: white;
-  padding: 2rem;
-  text-align: center;
-}
-
-nav.tabs {
-  display: flex;
-  gap: 0.5rem;
-  padding: 1rem;
-  background: #fff;
-  border-bottom: 1px solid var(--border);
-}
-
-.tab-button {
-  border: 1px solid var(--border);
-  background: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.tab-button.active {
-  background: var(--accent);
-  color: #fff;
+  padding: 1rem 2rem;
 }
 
 main {
-  padding: 2rem;
+  padding: 1rem 2rem;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
-.tab-section {
-  background: var(--card);
-  border-radius: 10px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+section {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  flex: 1 1 300px;
+}
+
+h2 {
+  margin-top: 0;
 }
 
 .recipe-card {
-  background: var(--card-soft);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1rem;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.recipe-card:hover {
-  background: var(--accent);
-  color: white;
-}
-
-.recipes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.btn.back {
-  background: var(--accent);
-  color: white;
-  border: none;
-  padding: 0.6rem 1rem;
-  cursor: pointer;
+  border: 1px solid #ddd;
   border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
-.btn {
-  background: var(--accent-strong);
-  color: white;
+.recipe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.favorite-button {
   border: none;
-  padding: 0.6rem 1rem;
+  background: none;
+  font-size: 1.1rem;
   cursor: pointer;
-  border-radius: 6px;
-  margin-top: 1rem;
+}
+
+.favorite-button.favorited {
+  color: #ffb100;
+  font-weight: bold;
+}
+
+#ingredient-input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+#ingredient-input {
+  flex: 1;
+  padding: 0.4rem 0.5rem;
+}
+
+#my-ingredients-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+#my-ingredients-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.remove-ingredient-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.remove-ingredient-button:hover {
+  color: #ff8a5c;
+}
+
+.shopping-button {
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.shopping-button:hover {
+  border-color: #ff8a5c;
 }

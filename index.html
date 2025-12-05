@@ -1,77 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MealMatch</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>MealMatch</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>MealMatch</h1>
+      <p>Find recipes and save your favorites</p>
+    </header>
 
-  <header>
-    <h1>MealMatch</h1>
-    <p>Find recipes and save your favorites</p>
-  </header>
+    <main>
+      <section>
+        <h2>My Ingredients</h2>
+        <div id="ingredient-input-row">
+          <input
+            id="ingredient-input"
+            type="text"
+            placeholder="Type an ingredient you have (e.g., chicken)"
+          />
+          <button id="add-ingredient-button">Add</button>
+        </div>
+        <ul id="my-ingredients-list"></ul>
+      </section>
 
-  <nav class="tabs">
-    <button class="tab-button active" data-tab="tab-all">All Recipes</button>
-    <button class="tab-button" data-tab="tab-favorites">Favorites</button>
-    <button class="tab-button" data-tab="tab-recommended">Recommended</button>
-    <button class="tab-button" data-tab="tab-weekly">Weekly Plan</button>
-  </nav>
+      <section>
+        <h2>All Recipes</h2>
+        <div id="recipes-list"></div>
+      </section>
 
-  <main>
-    <!-- All Recipes -->
-    <section id="tab-all" class="tab-section">
-      <h2>All Recipes</h2>
-      <div id="recipes-list" class="recipes-grid"></div>
-    </section>
+      <section>
+        <h2>Favorite Recipes</h2>
+        <p id="favorites-empty-message">
+          No favorites yet. Click a star to save one!
+        </p>
+        <div id="favorites-list"></div>
+      </section>
 
-    <!-- Favorites -->
-    <section id="tab-favorites" class="tab-section" style="display:none;">
-      <h2>Favorite Recipes</h2>
-      <p id="favorites-empty-message">No favorites yet. Click a star to save one!</p>
-      <div id="favorites-list" class="recipes-grid"></div>
-    </section>
+      <section>
+        <h2>Shopping List</h2>
+        <p id="shopping-list-message">
+          Select a recipe to see which ingredients you're missing.
+        </p>
+        <ul id="shopping-list-items"></ul>
+      </section>
+    </main>
 
-    <!-- Recipe Detail Section -->
-    <section id="recipe-detail-section" style="display:none;">
-      <button id="back-to-list">← Back to Recipes</button>
-      <h2 id="detail-title"></h2>
-      <h3>Ingredients:</h3>
-      <ul id="detail-ingredients"></ul>
-      <h3>Steps:</h3>
-      <ol id="detail-steps"></ol>
-    </section>
-
-    <!-- Recommended Recipes Section -->
-    <section>
-      <h2>Recommended for You</h2>
-      <div id="recommendations-list">
-        <p>No recommendations yet. Interact with some recipes!</p>
-      </div>
-    <!-- Recommended -->
-    <section id="tab-recommended" class="tab-section" style="display:none;">
-      <h2>Recommended for You</h2>
-      <div id="recommendations-list" class="recipes-grid"></div>
-    </section>
-
-    <!-- Weekly Plan -->
-    <section id="tab-weekly" class="tab-section" style="display:none;">
-      <h2>Weekly Meal Plan</h2>
-      <p>Coming soon...</p>
-    </section>
-
-    <!-- Recipe Detail -->
-    <section id="recipe-detail-section" style="display:none;">
-      <button id="back-to-list" class="btn back">← Back to Recipes</button>
-      <h2 id="detail-title"></h2>
-      <ul id="detail-ingredients"></ul>
-      <ol id="detail-steps"></ol>
-      <button id="favorite-toggle" class="btn">Save to Favorites</button>
-    </section>
-  </main>
-
-  <script src="app.js"></script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>
