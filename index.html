@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>MealMatch</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header>
-      <h1>MealMatch</h1>
-      <p>Find recipes and save your favorites</p>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MealMatch</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>MealMatch</h1>
+    <p>Find recipes and save your favorites</p>
+  </header>
 
-    <main>
-      <section>
-        <h2>All Recipes</h2>
-        <div id="recipes-list"></div>
-      </section>
+  <main>
+    <!-- All Recipes Section -->
+    <section>
+      <h2>All Recipes</h2>
+      <div id="recipes-list"></div>
+    </section>
 
+    <!-- Favorite Recipes Section -->
+    <section>
+      <h2>Favorite Recipes</h2>
+      <p id="favorites-empty-message">
+        No favorites yet. Click a star to save one!
+      </p>
+      <div id="favorites-list"></div>
+    </section>
       <section id="recipe-detail-section" style="display:none;">
         <button id="back-to-list">← Back to Recipes</button>
         <h2 id="detail-title"></h2>
@@ -39,6 +49,13 @@
       </section>
     </main>
 
-    <script src="app.js"></script>
-  </body>
+    <!-- Recommended Recipes Section (populated dynamically by JS) -->
+    <section id="recommendations-section">
+      <h2>Recommended for You</h2>
+      <p>No recommendations yet. Interact with some recipes!</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
 </html>
