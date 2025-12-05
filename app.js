@@ -1,118 +1,117 @@
-// Simple mock recipe data with ingredients for shopping list.
+// -------------------- Recipe Data --------------------
 const recipes = [
   {
     id: 1,
     name: "Spaghetti Marinara",
     description: "Simple pasta with tomato sauce.",
-    ingredients: ["spaghetti", "tomato sauce", "garlic", "olive oil", "salt"]
+    ingredients: ["pasta", "tomato sauce", "salt", "olive oil"],
+    steps: [
+      "Boil water and cook pasta according to package instructions.",
+      "Heat olive oil in a pan and add tomato sauce.",
+      "Combine pasta with sauce and serve."
+    ],
+    tags: ["vegetarian", "quick"]
   },
   {
     id: 2,
     name: "Veggie Stir-Fry",
     description: "Colorful vegetables sautéed with soy sauce.",
-    ingredients: ["broccoli", "carrots", "bell pepper", "soy sauce", "garlic"]
+    ingredients: ["carrot", "broccoli", "soy sauce", "oil"],
+    steps: [
+      "Chop all vegetables into bite-sized pieces.",
+      "Heat oil in a pan over medium heat.",
+      "Add vegetables and stir-fry for 5–7 minutes.",
+      "Add soy sauce and cook for another 2 minutes."
+    ],
+    tags: ["vegetarian", "low-fat", "quick"]
   },
   {
     id: 3,
     name: "Chicken Tacos",
     description: "Tortillas filled with seasoned chicken and toppings.",
-    ingredients: ["chicken", "tortillas", "lettuce", "cheese", "salsa"]
+    ingredients: ["chicken", "taco shells", "lettuce", "cheese", "salsa"],
+    steps: [
+      "Cook chicken in a pan with your favorite seasoning.",
+      "Warm taco shells in the oven.",
+      "Assemble tacos with chicken, lettuce, cheese, and salsa."
+    ],
+    tags: ["high-protein"]
   }
 ];
 
-// This will store the IDs of favorite recipes
+// -------------------- State --------------------
 let favoriteIds = [];
+let userHistory = { viewed: [], favorites: [] };
+let currentTab = "tab-all"; // track active tab
+let lastListTab = "tab-all"; // to return after detail
 
-// This will store the user's available ingredients (all lowercase)
-let myIngredients = [];
-
-// --- Get references to HTML elements ---
-
-// Recipes / Favorites
+// -------------------- Element References --------------------
+const tabs = document.querySelectorAll(".tab-button");
+const tabSections = document.querySelectorAll(".tab-section");
 const recipesListEl = document.getElementById("recipes-list");
 const favoritesListEl = document.getElementById("favorites-list");
-const favoritesEmptyMessageEl = document.getElementById(
-  "favorites-empty-message"
-);
+const favoritesEmptyMessageEl = document.getElementById("favorites-empty-message");
+const recommendationsListEl = document.getElementById("recommendations-list");
+const recipeDetailSection = document.getElementById("recipe-detail-section");
 
-// My Ingredients
-const ingredientInputEl = document.getElementById("ingredient-input");
-const addIngredientButtonEl = document.getElementById("add-ingredient-button");
-const myIngredientsListEl = document.getElementById("my-ingredients-list");
+const detailTitleEl = document.getElementById("detail-title");
+const detailIngredientsEl = document.getElementById("detail-ingredients");
+const detailStepsEl = document.getElementById("detail-steps");
+const detailMetaEl = document.getElementById("detail-meta");
 
-// Shopping List
-const shoppingListItemsEl = document.getElementById("shopping-list-items");
-const shoppingListMessageEl = document.getElementById("shopping-list-message");
+const dietaryCheckboxes = document.querySelectorAll("#dietary-filters input[type=checkbox]");
+const clearFiltersBtn = document.getElementById("clear-filters");
+const noResultsEl = document.getElementById("no-results");
 
-// Weekly Meal Plan
-const mealPlanListEl = document.getElementById("meal-plan-list");
-const mealPlanMessageEl = document.getElementById("meal-plan-message");
-const generateMealPlanButtonEl = document.getElementById(
-  "generate-meal-plan-button"
-);
-generateMealPlanButtonEl.addEventListener("click", generateMealPlan);
-
-
-// --- Event listeners for "My Ingredients" ---
-
-addIngredientButtonEl.addEventListener("click", addIngredient);
-ingredientInputEl.addEventListener("keyup", (event) => {
-  if (event.key === "Enter") {
-    addIngredient();
-  }
+// -------------------- Tab Switching --------------------
+tabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    switchTab(tab.dataset.tab);
+  });
 });
 
-// Add an ingredient the user has on hand
-function addIngredient() {
-  const rawValue = ingredientInputEl.value.trim();
-  if (!rawValue) return;
-
-  const ingredient = rawValue.toLowerCase();
-
-  // Avoid duplicates
-  if (!myIngredients.includes(ingredient)) {
-    myIngredients.push(ingredient);
-  }
-
-  ingredientInputEl.value = "";
-  renderMyIngredients();
+function switchTab(tabId) {
+  currentTab = tabId;
+  tabSections.forEach(sec => sec.style.display = "none");
+  document.getElementById(tabId).style.display = "block";
+  tabs.forEach(t => t.classList.remove("active"));
+  document.querySelector(`.tab-button[data-tab=${tabId}]`).classList.add("active");
 }
 
-// Render the list of ingredients the user has
-function renderMyIngredients() {
-  myIngredientsListEl.innerHTML = "";
-
-  if (myIngredients.length === 0) {
-    const li = document.createElement("li");
-    li.textContent = "No ingredients added yet.";
-    myIngredientsListEl.appendChild(li);
-    return;
+// -------------------- Favorite Logic --------------------
+function toggleFavorite(recipeId) {
+  if (favoriteIds.includes(recipeId)) {
+    favoriteIds = favoriteIds.filter(id => id !== recipeId);
+  } else {
+    favoriteIds.push(recipeId);
   }
-
-  myIngredients.forEach((ingredient, index) => {
-    const li = document.createElement("li");
-    li.textContent = ingredient;
-
-    const removeButton = document.createElement("button");
-    removeButton.className = "remove-ingredient-button";
-    removeButton.textContent = "x";
-
-    removeButton.addEventListener("click", () => {
-      myIngredients.splice(index, 1);
-      renderMyIngredients();
-    });
-
-    li.appendChild(removeButton);
-    myIngredientsListEl.appendChild(li);
-  });
+  userHistory.favorites = [...favoriteIds];
+  renderFavorites();
+  renderRecipes();
+  renderRecommendations();
 }
 
-// --- Render all recipes with favorite + shopping buttons ---
-
+// -------------------- Render Recipes --------------------
 function renderRecipes() {
   recipesListEl.innerHTML = "";
+  let filtered = [...recipes];
 
-  recipes.forEach((recipe) => {
+  // Apply dietary filters
+  const selectedTags = Array.from(dietaryCheckboxes)
+    .filter(cb => cb.checked)
+    .map(cb => cb.value);
+
+  if (selectedTags.length > 0) {
+    filtered = filtered.filter(r => selectedTags.every(tag => r.tags.includes(tag)));
+  }
+
+  if (filtered.length === 0) {
+    noResultsEl.style.display = "block";
+  } else {
+    noResultsEl.style.display = "none";
+  }
+
+  filtered.forEach(recipe => {
     const card = document.createElement("div");
     card.className = "recipe-card";
 
@@ -121,58 +120,40 @@ function renderRecipes() {
 
     const title = document.createElement("h3");
     title.textContent = recipe.name;
+    title.addEventListener("click", () => showRecipeDetail(recipe.id));
 
-    const favButton = document.createElement("button");
-    favButton.className = "favorite-button";
-
-    const isFavorite = favoriteIds.includes(recipe.id);
-    favButton.textContent = isFavorite ? "★ Favorited" : "☆ Favorite";
-    if (isFavorite) {
-      favButton.classList.add("favorited");
-    }
-
-    favButton.addEventListener("click", () => {
+    const favBtn = document.createElement("button");
+    favBtn.className = "favorite-button";
+    favBtn.textContent = favoriteIds.includes(recipe.id) ? "★ Favorited" : "☆ Favorite";
+    if (favoriteIds.includes(recipe.id)) favBtn.classList.add("favorited");
+    favBtn.addEventListener("click", e => {
+      e.stopPropagation();
       toggleFavorite(recipe.id);
     });
 
     header.appendChild(title);
-    header.appendChild(favButton);
+    header.appendChild(favBtn);
 
     const desc = document.createElement("p");
     desc.textContent = recipe.description;
 
-    const shoppingButton = document.createElement("button");
-    shoppingButton.className = "shopping-button";
-    shoppingButton.textContent = "Show Shopping List";
-
-    shoppingButton.addEventListener("click", () => {
-      showShoppingList(recipe);
-    });
-
     card.appendChild(header);
     card.appendChild(desc);
-    card.appendChild(shoppingButton);
     recipesListEl.appendChild(card);
   });
 }
 
-// --- Favorites section ---
-
+// -------------------- Render Favorites --------------------
 function renderFavorites() {
   favoritesListEl.innerHTML = "";
-
-  const favoriteRecipes = recipes.filter((recipe) =>
-    favoriteIds.includes(recipe.id)
-  );
-
+  const favoriteRecipes = recipes.filter(r => favoriteIds.includes(r.id));
   if (favoriteRecipes.length === 0) {
     favoritesEmptyMessageEl.style.display = "block";
     return;
   }
-
   favoritesEmptyMessageEl.style.display = "none";
 
-  favoriteRecipes.forEach((recipe) => {
+  favoriteRecipes.forEach(recipe => {
     const card = document.createElement("div");
     card.className = "recipe-card";
 
@@ -181,17 +162,15 @@ function renderFavorites() {
 
     const title = document.createElement("h3");
     title.textContent = recipe.name;
+    title.addEventListener("click", () => showRecipeDetail(recipe.id));
 
-    const removeButton = document.createElement("button");
-    removeButton.className = "favorite-button favorited";
-    removeButton.textContent = "Remove ★";
-
-    removeButton.addEventListener("click", () => {
-      toggleFavorite(recipe.id);
-    });
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "favorite-button favorited";
+    removeBtn.textContent = "Remove ★";
+    removeBtn.addEventListener("click", () => toggleFavorite(recipe.id));
 
     header.appendChild(title);
-    header.appendChild(removeButton);
+    header.appendChild(removeBtn);
 
     const desc = document.createElement("p");
     desc.textContent = recipe.description;
@@ -202,112 +181,81 @@ function renderFavorites() {
   });
 }
 
-// Add or remove a recipe from favorites
-function toggleFavorite(recipeId) {
-  if (favoriteIds.includes(recipeId)) {
-    favoriteIds = favoriteIds.filter((id) => id !== recipeId);
-  } else {
-    favoriteIds.push(recipeId);
-  }
+// -------------------- Recommendations --------------------
+function getRecommendations() {
+  const interacted = [...new Set([...userHistory.viewed, ...userHistory.favorites])];
+  return recipes.filter(r => !interacted.includes(r.id)).slice(0,5);
+}
 
+function renderRecommendations() {
+  recommendationsListEl.innerHTML = "";
+  const recs = getRecommendations();
+  if (recs.length === 0) {
+    recommendationsListEl.innerHTML = "<p class='muted'>No recommendations yet. Interact with some recipes!</p>";
+    return;
+  }
+  recs.forEach(recipe => {
+    const card = document.createElement("div");
+    card.className = "recipe-card";
+    const title = document.createElement("h3");
+    title.textContent = recipe.name;
+    title.addEventListener("click", () => showRecipeDetail(recipe.id));
+    card.appendChild(title);
+    recommendationsListEl.appendChild(card);
+  });
+}
+
+// -------------------- Detail View --------------------
+function showRecipeDetail(recipeId) {
+  const recipe = recipes.find(r => r.id === recipeId);
+  if (!recipe) return;
+
+  if (!userHistory.viewed.includes(recipeId)) userHistory.viewed.push(recipeId);
+
+  lastListTab = currentTab;
+
+  tabSections.forEach(sec => sec.style.display = "none");
+  recipeDetailSection.style.display = "block";
+
+  detailTitleEl.textContent = recipe.name;
+
+  // Ingredients
+  detailIngredientsEl.innerHTML = "";
+  recipe.ingredients.forEach(i => {
+    const li = document.createElement("li");
+    li.textContent = i;
+    detailIngredientsEl.appendChild(li);
+  });
+
+  // Steps
+  detailStepsEl.innerHTML = "";
+  recipe.steps.forEach(s => {
+    const li = document.createElement("li");
+    li.textContent = s;
+    detailStepsEl.appendChild(li);
+  });
+
+  // Meta
+  detailMetaEl.textContent = `Tags: ${recipe.tags.join(", ")}`;
+}
+
+// -------------------- Back Button --------------------
+document.getElementById("back-to-list").addEventListener("click", () => {
+  recipeDetailSection.style.display = "none";
+  switchTab(lastListTab);
+});
+
+// -------------------- Dietary Filters --------------------
+dietaryCheckboxes.forEach(cb => cb.addEventListener("change", renderRecipes));
+clearFiltersBtn.addEventListener("click", () => {
+  dietaryCheckboxes.forEach(cb => cb.checked = false);
   renderRecipes();
-  renderFavorites();
-}
+});
 
-// --- Shopping list logic ---
+// -------------------- Refresh Recommendations --------------------
+document.getElementById("refresh-recommendations").addEventListener("click", renderRecommendations);
 
-function showShoppingList(recipe) {
-  shoppingListItemsEl.innerHTML = "";
-
-  if (myIngredients.length === 0) {
-    shoppingListMessageEl.textContent =
-      "Add your ingredients first so we can calculate what you're missing.";
-    return;
-  }
-
-  const missing = recipe.ingredients.filter((ingredient) => {
-    const normalized = ingredient.toLowerCase();
-    return !myIngredients.includes(normalized);
-  });
-
-  if (missing.length === 0) {
-    shoppingListMessageEl.textContent = `You already have all ingredients for ${recipe.name}!`;
-    return;
-  }
-
-  shoppingListMessageEl.textContent = `Missing ingredients for ${recipe.name}:`;
-
-  missing.forEach((ingredient) => {
-    const li = document.createElement("li");
-    li.textContent = ingredient;
-    shoppingListItemsEl.appendChild(li);
-  });
-}
-
-// --- Weekly Meal Plan logic ---
-
-// Simple approach:
-// - We build a 5-day plan (Mon–Fri)
-// - Prefer favorite recipes if there are enough
-// - Otherwise fill with other recipes
-// - Avoid repeating the same recipe if possible
-
-function generateMealPlan() {
-  mealPlanListEl.innerHTML = "";
-
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
-  // Start from favorites if there are any
-  const favoriteRecipes = recipes.filter((recipe) =>
-    favoriteIds.includes(recipe.id)
-  );
-
-  // Copy arrays so we don't mutate originals
-  const availableFavorites = [...favoriteRecipes];
-  const availableOthers = recipes.filter(
-    (recipe) => !favoriteIds.includes(recipe.id)
-  );
-
-  if (recipes.length === 0) {
-    mealPlanMessageEl.textContent =
-      "No recipes available to build a meal plan yet.";
-    return;
-  }
-
-  mealPlanMessageEl.textContent =
-    "Here is your suggested plan for the week:";
-
-  days.forEach((day) => {
-    let chosenRecipe = null;
-
-    if (availableFavorites.length > 0) {
-      // Use a favorite first
-      chosenRecipe = availableFavorites.shift();
-    } else if (availableOthers.length > 0) {
-      // Fall back to non-favorites
-      chosenRecipe = availableOthers.shift();
-    } else {
-      // If we run out, just reuse any recipe
-      chosenRecipe = recipes[Math.floor(Math.random() * recipes.length)];
-    }
-
-    const li = document.createElement("li");
-
-    const daySpan = document.createElement("span");
-    daySpan.className = "meal-plan-day";
-    daySpan.textContent = day + ":";
-
-    const recipeSpan = document.createElement("span");
-    recipeSpan.textContent = chosenRecipe.name;
-
-    li.appendChild(daySpan);
-    li.appendChild(recipeSpan);
-    mealPlanListEl.appendChild(li);
-  });
-}
-
-
-// --- Initial render when the page loads ---
-renderMyIngredients();
+// -------------------- Initial Render --------------------
 renderRecipes();
 renderFavorites();
+renderRecommendations();
